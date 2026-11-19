@@ -732,6 +732,15 @@ footer { padding-bottom:max(calc(6.5rem + env(safe-area-inset-bottom,0px)),var(-
       localStorage.removeItem(readingSpaceKey);
     } catch {}
   });
+  let keyboardNavigation = false;
+  document.addEventListener('pointerdown', () => {
+    keyboardNavigation = false;
+  }, true);
+  document.addEventListener('focusin', event => {
+    if (keyboardNavigation && !accessibilityControls.contains(event.target)) {
+      setAccessibilityPanelOpen(false);
+    }
+  });
   document.addEventListener('click', event => {
     if (!accessibilityControls.contains(event.target)) setAccessibilityPanelOpen(false);
   });
@@ -740,11 +749,7 @@ footer { padding-bottom:max(calc(6.5rem + env(safe-area-inset-bottom,0px)),var(-
       setAccessibilityPanelOpen(false);
       accessibilityTrigger.focus();
     }
-    if (event.key === 'Tab' && !accessibilityPanel.hidden) {
-      requestAnimationFrame(() => {
-        if (!accessibilityControls.contains(document.activeElement)) setAccessibilityPanelOpen(false);
-      });
-    }
+    if (event.key === 'Tab') keyboardNavigation = true;
   });
   updateReadingPreferences();
   accessibilityControls.hidden = false;
