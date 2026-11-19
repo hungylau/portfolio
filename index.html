@@ -340,7 +340,6 @@ footer{padding-bottom:calc(6.5rem + env(safe-area-inset-bottom, 0px))}
 .platform-figure{width:100%;margin-top:auto}
 .platform-image{display:flex;align-items:center;justify-content:center;width:100%;height:clamp(12rem,24vw,18rem);padding:1rem;border:1px solid var(--line);border-radius:.9rem;overflow:hidden;background:#fff}
 .platform-image img{display:block;width:100%;height:100%;object-fit:contain}
-.wagtail-platform{background:#eff2f8}
 .site-header .brand { flex-wrap:wrap; gap:.6rem; }
 .site-header .brand-name { margin-right:auto; text-decoration:none; }
 .contrast-toggle {
@@ -380,8 +379,8 @@ footer{padding-bottom:calc(6.5rem + env(safe-area-inset-bottom, 0px))}
   .contrast-toggle, .contrast-state, .button, .dock { border:1px solid ButtonText; }
   .brand-mark { background:CanvasText; forced-color-adjust:none; }
 }
-.wagtail-platform { padding:0; background:#fff; }
-.wagtail-platform img { object-fit:fill; }
+.platform-image.wagtail-platform { height:auto; padding:0; background:#fff; }
+.wagtail-platform img { height:auto; }
 
 @media(max-width:660px){.platform-image{height:14rem}}
 
