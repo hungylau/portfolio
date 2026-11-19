@@ -131,6 +131,14 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   }
   document.documentElement.toggleAttribute('data-high-contrast', highContrastEnabled());
 
+  const textSizeKey = 'portfolio-text-size';
+  let textSize = 100;
+  try {
+    const savedSize = Number(localStorage.getItem(textSizeKey));
+    if ([100, 125, 150, 175, 200].includes(savedSize)) textSize = savedSize;
+  } catch {}
+  document.documentElement.style.fontSize = textSize + '%';
+
   const readingSpaceKey = 'portfolio-reading-spacing';
   let extraReadingSpace = false;
   try {
@@ -302,7 +310,7 @@ footer{padding-bottom:calc(6.5rem + env(safe-area-inset-bottom, 0px))}
   opacity:1;
   pointer-events:auto;
 }
-.dock:focus-within { transition:none; }
+.dock:focus-within { transition:none; visibility:visible; }
 .with-symbol{display:flex;align-items:center;gap:.45em}
 .with-symbol>span:last-child{min-width:0}
 .heading-symbol{
@@ -404,10 +412,11 @@ main:focus-visible > .hero > .hero-copy > h1,
 .accessibility-panel button:disabled { cursor:default; opacity:.55; }
 .accessibility-panel .contrast-toggle, .spacing-toggle { width:100%; justify-content:space-between; }
 .spacing-toggle { display:flex; align-items:center; gap:.5rem; margin-top:.75rem; }
-.zoom-help { margin:.85rem 0; }
-.zoom-help h3 { font-size:1rem; line-height:1.4; letter-spacing:normal; }
-.zoom-help p { margin:.25rem 0 0; }
-.zoom-help kbd { white-space:nowrap; font:inherit; font-weight:750; }
+.text-size-setting { margin:.85rem 0; padding:0; border:0; min-width:0; }
+.text-size-setting legend { margin-bottom:.4rem; font-size:1rem; font-weight:800; }
+.text-size-buttons { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; }
+.text-size-buttons button { flex:1; min-width:44px; }
+.text-size-value { min-width:4ch; text-align:center; font-weight:800; }
 .accessibility-panel .reset-reading { width:100%; margin-top:1rem; text-decoration:underline; }
 :root[data-reading-spacing] body { letter-spacing:.025em; word-spacing:.06em; }
 :root[data-reading-spacing] :is(p,li) { line-height:1.9; }
@@ -479,10 +488,14 @@ footer { padding-bottom:max(calc(6.5rem + env(safe-area-inset-bottom,0px)),var(-
         <button type="button" class="contrast-toggle" aria-pressed="false" hidden>
           High contrast <span class="contrast-state" aria-hidden="true">Off</span>
         </button>
-        <div class="zoom-help">
-          <h3>Page zoom</h3>
-          <p>Use your browser’s zoom menu, or press <kbd>⌘ +</kbd> or <kbd>⌘ −</kbd> on Mac. On Windows and Linux, use <kbd>Ctrl +</kbd> or <kbd>Ctrl −</kbd>.</p>
-        </div>
+        <fieldset class="text-size-setting">
+          <legend>Text size</legend>
+          <div class="text-size-buttons">
+            <button type="button" class="text-size-decrease" aria-label="Decrease text size">A−</button>
+            <output class="text-size-value" aria-live="polite" aria-label="Text size">100%</output>
+            <button type="button" class="text-size-increase" aria-label="Increase text size">A+</button>
+          </div>
+        </fieldset>
         <button type="button" class="spacing-toggle" aria-pressed="false">
           Extra reading space <span class="spacing-state" aria-hidden="true">Off</span>
         </button>
@@ -491,7 +504,7 @@ footer { padding-bottom:max(calc(6.5rem + env(safe-area-inset-bottom,0px)),var(-
     </details><span class="brand-mark" aria-hidden="true" style="--signature:url(assets/hungy-lau-signature.svg)"></span>
   </div>
 </header>
-<nav class="dock" aria-label="Main navigation"><a href="#work">Work</a><a href="#about">About</a><a href="#contact">Contact</a></nav>
+<nav class="dock" aria-label="Main navigation"><a href="#work" tabindex="0">Work</a><a href="#about" tabindex="0">About</a><a href="#contact" tabindex="0">Contact</a></nav>
 <main id="main" class="jump-target" tabindex="-1">
   <section class="wrap hero" aria-labelledby="intro">
     <img class="hero-portrait" src="assets/hungy-lau-portrait.jpg" width="1920" height="1280" alt="Portrait of Hungy Lau" fetchpriority="high">
@@ -655,10 +668,17 @@ footer { padding-bottom:max(calc(6.5rem + env(safe-area-inset-bottom,0px)),var(-
 
   const accessibilityControls = document.querySelector('.accessibility-controls');
   const accessibilitySummary = accessibilityControls.querySelector('summary');
+  const sizeValue = document.querySelector('.text-size-value');
+  const decreaseSize = document.querySelector('.text-size-decrease');
+  const increaseSize = document.querySelector('.text-size-increase');
   const spacingButton = document.querySelector('.spacing-toggle');
   const spacingState = document.querySelector('.spacing-state');
 
   function updateReadingPreferences() {
+    document.documentElement.style.fontSize = textSize + '%';
+    sizeValue.textContent = textSize + '%';
+    decreaseSize.disabled = textSize === 100;
+    increaseSize.disabled = textSize === 200;
     document.documentElement.toggleAttribute('data-reading-spacing', extraReadingSpace);
     spacingButton.setAttribute('aria-pressed', String(extraReadingSpace));
     spacingState.textContent = extraReadingSpace ? 'On' : 'Off';
@@ -666,22 +686,37 @@ footer { padding-bottom:max(calc(6.5rem + env(safe-area-inset-bottom,0px)),var(-
 
   function saveReadingPreferences() {
     try {
+      localStorage.setItem(textSizeKey, String(textSize));
       localStorage.setItem(readingSpaceKey, extraReadingSpace ? 'on' : 'off');
     } catch {}
   }
 
+  decreaseSize.addEventListener('click', () => {
+    textSize = Math.max(100, textSize - 25);
+    updateReadingPreferences();
+    saveReadingPreferences();
+    if (decreaseSize.disabled) increaseSize.focus();
+  });
+  increaseSize.addEventListener('click', () => {
+    textSize = Math.min(200, textSize + 25);
+    updateReadingPreferences();
+    saveReadingPreferences();
+    if (increaseSize.disabled) decreaseSize.focus();
+  });
   spacingButton.addEventListener('click', () => {
     extraReadingSpace = !extraReadingSpace;
     updateReadingPreferences();
     saveReadingPreferences();
   });
   document.querySelector('.reset-reading').addEventListener('click', () => {
+    textSize = 100;
     extraReadingSpace = false;
     contrastPreference = null;
     updateContrast();
     updateReadingPreferences();
     try {
       localStorage.removeItem(contrastKey);
+      localStorage.removeItem(textSizeKey);
       localStorage.removeItem(readingSpaceKey);
     } catch {}
   });
