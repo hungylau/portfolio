@@ -384,15 +384,14 @@ main:focus-visible > .hero > .hero-copy > h1,
 /* Reading preferences and accessibility controls */
 .accessibility-controls { max-width:100%; font-size:1rem; font-weight:400; }
 .accessibility-controls[hidden] { display:none; }
-.accessibility-controls summary {
+.accessibility-trigger {
   display:flex; align-items:center; justify-content:center; gap:.45em;
   min-height:44px; padding:.4rem .8rem; list-style:none; cursor:pointer;
   border:1px solid var(--ocean); border-radius:2rem;
-  background:var(--white); color:var(--ink); font-size:.875rem; font-weight:800;
+  background:var(--white); color:var(--ink); font:800 .875rem/1.5 Nunito,sans-serif;
 }
-.accessibility-controls summary::-webkit-details-marker { display:none; }
-.accessibility-controls summary::after { content:"+"; font-size:1.2em; }
-.accessibility-controls[open] summary::after { content:"−"; }
+.accessibility-trigger::after { content:"+"; font-size:1.2em; }
+.accessibility-trigger[aria-expanded="true"]::after { content:"−"; }
 .accessibility-panel {
   --panel-top:min(calc(var(--header-height,4.3125rem) + .5rem),25dvh);
   position:fixed; z-index:30; top:var(--panel-top);
@@ -403,6 +402,7 @@ main:focus-visible > .hero > .hero-copy > h1,
   background:var(--white); color:var(--ink); box-shadow:0 .4rem 1.5rem #173a5933;
   line-height:1.5;
 }
+.accessibility-panel[hidden] { display:none; }
 .accessibility-panel h2 { font-size:1.25rem; line-height:1.3; margin:0 0 .8rem; }
 .accessibility-panel button {
   min-height:44px; border:1px solid var(--ocean); border-radius:.55rem;
@@ -424,7 +424,7 @@ main:focus-visible > .hero > .hero-copy > h1,
 :root[data-reading-spacing] .card { row-gap:1.25rem; }
 :root[data-high-contrast] .accessibility-panel,
 :root[data-high-contrast] .accessibility-panel button,
-:root[data-high-contrast] .accessibility-controls summary { border-color:#111; }
+:root[data-high-contrast] .accessibility-trigger { border-color:#111; }
 
 /* Screenshot viewer */
 .image-preview { position:relative; width:100%; }
@@ -481,9 +481,9 @@ footer { padding-bottom:max(calc(6.5rem + env(safe-area-inset-bottom,0px)),var(-
 <header class="jump-target site-header" id="top" tabindex="-1">
   <div class="wrap brand">
     <a class="brand-name jump-heading" href="#top" aria-label="Hungy Lau, home">Hungy Lau</a>
-    <details class="accessibility-controls" hidden>
-      <summary>Accessibility</summary>
-      <div class="accessibility-panel">
+    <div class="accessibility-controls" hidden>
+      <button type="button" class="accessibility-trigger" aria-expanded="false" aria-controls="reading-preferences">Accessibility</button>
+      <div class="accessibility-panel" id="reading-preferences" hidden>
         <h2>Reading preferences</h2>
         <button type="button" class="contrast-toggle" aria-pressed="false" hidden>
           High contrast <span class="contrast-state" aria-hidden="true">Off</span>
@@ -501,7 +501,7 @@ footer { padding-bottom:max(calc(6.5rem + env(safe-area-inset-bottom,0px)),var(-
         </button>
         <button type="button" class="reset-reading">Reset preferences</button>
       </div>
-    </details><span class="brand-mark" aria-hidden="true" style="--signature:url(assets/hungy-lau-signature.svg)"></span>
+    </div><span class="brand-mark" aria-hidden="true" style="--signature:url(assets/hungy-lau-signature.svg)"></span>
   </div>
 </header>
 <nav class="dock" aria-label="Main navigation"><a href="#work" tabindex="0">Work</a><a href="#about" tabindex="0">About</a><a href="#contact" tabindex="0">Contact</a></nav>
@@ -644,7 +644,11 @@ footer { padding-bottom:max(calc(6.5rem + env(safe-area-inset-bottom,0px)),var(-
       localStorage.setItem(contrastKey, contrastPreference);
     } catch {}
   });
-  contrastSystem.addEventListener('change', updateContrast);
+  if (contrastSystem.addEventListener) {
+    contrastSystem.addEventListener('change', updateContrast);
+  } else {
+    contrastSystem.addListener(updateContrast);
+  }
   updateContrast();
   contrastButton.hidden = false;
 
@@ -667,7 +671,15 @@ footer { padding-bottom:max(calc(6.5rem + env(safe-area-inset-bottom,0px)),var(-
   window.addEventListener('pageshow', updateDockVisibility);
 
   const accessibilityControls = document.querySelector('.accessibility-controls');
-  const accessibilitySummary = accessibilityControls.querySelector('summary');
+  const accessibilityTrigger = accessibilityControls.querySelector('.accessibility-trigger');
+  const accessibilityPanel = accessibilityControls.querySelector('.accessibility-panel');
+  function setAccessibilityPanelOpen(open) {
+    accessibilityTrigger.setAttribute('aria-expanded', String(open));
+    accessibilityPanel.hidden = !open;
+  }
+  accessibilityTrigger.addEventListener('click', () => {
+    setAccessibilityPanelOpen(accessibilityPanel.hidden);
+  });
   const sizeValue = document.querySelector('.text-size-value');
   const decreaseSize = document.querySelector('.text-size-decrease');
   const increaseSize = document.querySelector('.text-size-increase');
@@ -720,16 +732,18 @@ footer { padding-bottom:max(calc(6.5rem + env(safe-area-inset-bottom,0px)),var(-
       localStorage.removeItem(readingSpaceKey);
     } catch {}
   });
-  document.addEventListener('focusin', event => {
-    if (!accessibilityControls.contains(event.target)) accessibilityControls.open = false;
-  });
   document.addEventListener('click', event => {
-    if (!accessibilityControls.contains(event.target)) accessibilityControls.open = false;
+    if (!accessibilityControls.contains(event.target)) setAccessibilityPanelOpen(false);
   });
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && accessibilityControls.open) {
-      accessibilityControls.open = false;
-      accessibilitySummary.focus();
+    if (event.key === 'Escape' && !accessibilityPanel.hidden) {
+      setAccessibilityPanelOpen(false);
+      accessibilityTrigger.focus();
+    }
+    if (event.key === 'Tab' && !accessibilityPanel.hidden) {
+      requestAnimationFrame(() => {
+        if (!accessibilityControls.contains(document.activeElement)) setAccessibilityPanelOpen(false);
+      });
     }
   });
   updateReadingPreferences();
