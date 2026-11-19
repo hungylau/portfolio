@@ -473,6 +473,20 @@ footer { padding-bottom:max(calc(6.5rem + env(safe-area-inset-bottom,0px)),var(-
 }
 .image-viewer-image[hidden],.image-viewer-composite[hidden]{display:none}
 .image-viewer-composite svg{display:block;width:100%;height:auto}
+.accessibility-statement {
+  margin-top:2rem;
+  padding-top:1rem;
+  border-top:1px solid var(--line);
+  font-size:.9375rem;
+}
+.accessibility-statement summary {
+  width:fit-content;
+  padding-block:.4rem;
+  cursor:pointer;
+  font-weight:800;
+}
+.statement-copy { max-width:70ch; color:var(--muted); }
+footer .statement-reviewed { font-size:.875rem; }
 </style>
 </head>
 <body>
@@ -581,6 +595,13 @@ footer { padding-bottom:max(calc(6.5rem + env(safe-area-inset-bottom,0px)),var(-
         <p>Expanding the Twins Trust helpline meant planning how enquiries would be handled across channels. My contribution to the virtual contact centre included considering wait times and what automated replies should tell families about when to expect a response.</p>
         <p>The new workflows accounted for WhatsApp’s 24-hour reply window. Training for volunteers and the Family Services Officer covered how to handle enquiries across the channels.</p>
       </article>
+      <article class="jump-target case" id="accessibility-case" tabindex="-1">
+        <p class="tag">This portfolio · Accessibility</p>
+        <h3>Making this portfolio easier to use</h3>
+        <p>Accessibility requirements focused on flexible reading preferences and reliable keyboard navigation. Iterative review identified gaps in the floating menu’s focus behaviour and the reading controls in Safari.</p>
+        <p>Improvements included visible focus indicators, a skip-to-content link and section navigation that moves focus to the destination. Image enlargement supports keyboard operation, with Escape closing the viewer and returning focus to its opening button. High contrast, adjustable text size and extra reading space offer visitors more control over how they read the page.</p>
+        <p>Manual checks in Chrome covered keyboard navigation, reading preferences and image enlargement. Feedback from Safari testing led to changes in the reading panel’s focus handling, followed by confirmation that the controls worked. The process combined requirements, browser testing and iteration, with further screen reader testing and a full accessibility evaluation still to complete.</p>
+      </article>
     </div>
     </div>
   </section>
@@ -618,6 +639,16 @@ footer { padding-bottom:max(calc(6.5rem + env(safe-area-inset-bottom,0px)),var(-
     <h2 class="with-symbol jump-heading"><span class="heading-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M21 11a8 8 0 0 1-8 8H7l-4 3V7a4 4 0 0 1 4-4h6a8 8 0 0 1 8 8Z"/><path d="M7 9h10M7 13h7"/></svg></span><span>Get in touch</span></h2>
     <p>Connect with me on LinkedIn.</p>
     <a class="button" href="https://www.linkedin.com/in/hungy/">Hungy Lau on LinkedIn <span aria-hidden="true">↗</span></a>
+    <details class="accessibility-statement">
+      <summary>Accessibility statement</summary>
+      <div class="statement-copy">
+        <p>This portfolio includes keyboard navigation, visible focus indicators, a skip-to-content link and keyboard-operated image enlargement. Reading preferences provide high contrast, text sizing and extra reading space. The site also respects reduced-motion preferences.</p>
+        <p>Manual checks have covered keyboard navigation and reading controls in Chrome, alongside feedback and confirmation from Safari testing. A full WCAG conformance assessment and screen reader testing remain to be completed.</p>
+        <p>If you encounter a barrier, please <a href="https://www.linkedin.com/in/hungy/">contact Hungy Lau on LinkedIn</a> and describe the issue, browser and device you are using.</p>
+        <p><a href="#accessibility-case">Read the accessibility case study</a></p>
+        <p class="statement-reviewed">Last reviewed 19 November 2026.</p>
+      </div>
+    </details>
   </div>
 </footer>
 <dialog class="image-viewer" aria-labelledby="image-viewer-title">
