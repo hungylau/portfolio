@@ -462,6 +462,13 @@ footer{padding-bottom:calc(6.5rem + env(safe-area-inset-bottom, 0px))}
 html { scroll-padding-bottom:var(--dock-clearance,6rem); }
 footer { padding-bottom:max(calc(6.5rem + env(safe-area-inset-bottom,0px)),var(--dock-clearance,6rem)); }
 
+
+.hero-portrait { max-width:100%; }
+.with-symbol > span:last-child { overflow-wrap:anywhere; }
+.image-viewer-header h2 { min-width:0; overflow-wrap:anywhere; }
+@media(max-width:660px), (max-height:400px) {
+  .image-viewer-header { position:static; flex-wrap:wrap; }
+}
 </style>
 </head>
 <body>
