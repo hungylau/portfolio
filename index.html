@@ -487,6 +487,17 @@ footer { padding-bottom:max(calc(6.5rem + env(safe-area-inset-bottom,0px)),var(-
 }
 .statement-copy { max-width:70ch; color:var(--muted); }
 footer .statement-reviewed { font-size:.875rem; }
+.accessibility-work-card {
+  grid-column:1/-1;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);
+  align-items:center;
+  gap:clamp(1rem,3vw,2rem);
+}
+.accessibility-work-card a { display:inline-block; margin-top:1rem; }
+@media(max-width:660px) {
+  .accessibility-work-card { grid-template-columns:1fr; }
+}
 </style>
 </head>
 <body>
@@ -570,6 +581,16 @@ footer .statement-reviewed { font-size:.875rem; }
 </svg></figure></article>
         <article class="card"><p class="tag">Twins Trust · CMS training</p><h3>Helping colleagues publish in Wagtail</h3><p>Supported CMS adoption with recorded training and publishing guidance for Wagtail editors.</p><figure class="project-figure platform-figure"><div class="platform-image wagtail-platform"><img src="assets/wagtail-editor.png?v=preview-pane" width="2048" height="1248" loading="lazy" alt="Twins Trust’s Wagtail editor with antenatal care content fields and a live mobile page preview on the right"></div></figure><a href="#training">Explore the CMS training case study</a></article>
         <article class="card"><p class="tag">Twins Trust · User journeys</p><h3>Giving families more ways to reach the helpline</h3><p>Supported the rollout of a multichannel helpline across phone, email and WhatsApp.</p><figure class="project-figure platform-figure"><div class="platform-image callhandling-platform"><img src="assets/callhandling-vcc.png" width="1208" height="509" loading="lazy" alt="Call Handling VCC product diagram connecting an agent inbox to voice, digital, routing and outbound channels"></div></figure><a href="#helpline">Explore the helpline case study</a></article>
+        <article class="card accessibility-work-card">
+          <div class="feature-copy">
+            <p class="tag">This portfolio · Accessibility</p>
+            <h3>Making this portfolio easier to use</h3>
+          </div>
+          <div>
+            <p>Refined keyboard navigation, reading preferences and image enlargement through browser testing and iterative feedback.</p>
+            <a href="#accessibility-case">Explore the accessibility case study</a>
+          </div>
+        </article>
       </div>
     </div>
   </section>
