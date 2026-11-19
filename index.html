@@ -358,10 +358,7 @@ footer{padding-bottom:calc(6.5rem + env(safe-area-inset-bottom, 0px))}
   --focus-dark:#111;
   --focus-light:#ffd940;
 }
-:is(a, button, summary):focus-visible,
-.jump-target:focus-visible > .wrap > .jump-heading,
-main:focus-visible > .hero > .hero-copy > h1,
-.case:focus-visible > h3 {
+:is(a, button, summary):focus-visible {
   outline:3px solid var(--focus-dark);
   outline-offset:2px;
   box-shadow:0 0 0 2px var(--focus-light);
