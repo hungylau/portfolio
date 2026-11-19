@@ -429,11 +429,20 @@ footer{padding-bottom:calc(6.5rem + env(safe-area-inset-bottom, 0px))}
 :root[data-high-contrast] .accessibility-controls summary { border-color:#111; }
 
 /* Screenshot viewer */
+.image-preview { position:relative; width:100%; }
 .image-enlarge {
-  display:block; min-height:44px; margin-top:.4rem; padding:.35rem .7rem;
-  border:1px solid var(--ocean); border-radius:.5rem;
-  background:var(--white); color:var(--ink); cursor:pointer;
-  font:800 .875rem/1.4 Nunito,sans-serif; text-decoration:underline;
+  position:absolute; right:.6rem; bottom:.6rem;
+  display:grid; place-items:center; width:44px; height:44px;
+  min-width:44px; min-height:44px; margin:0; padding:10px;
+  border:1px solid #fff; border-radius:.6rem;
+  background:var(--ocean); color:#fff; cursor:pointer;
+  box-shadow:0 2px 8px #173a5940;
+}
+.image-enlarge svg { display:block; width:22px; height:22px; pointer-events:none; }
+.image-enlarge:hover { box-shadow:0 0 0 2px var(--ocean); }
+.image-enlarge:focus-visible {
+  outline:3px solid #fff; outline-offset:2px;
+  box-shadow:0 0 0 7px var(--ocean);
 }
 .image-viewer {
   width:min(96vw,100rem); max-width:96vw; max-height:94dvh;
@@ -749,11 +758,15 @@ footer { padding-bottom:max(calc(6.5rem + env(safe-area-inset-bottom,0px)),var(-
     const enlarge = document.createElement('button');
     enlarge.type = 'button';
     enlarge.className = 'image-enlarge';
-    enlarge.textContent = 'Enlarge image';
+    enlarge.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>';
+    enlarge.title = 'Enlarge image';
     enlarge.setAttribute('aria-label', 'Enlarge image for ' + cardTitle);
     enlarge.setAttribute('aria-haspopup', 'dialog');
-    sourceImage.closest('.platform-image')?.after(enlarge);
-    if (!enlarge.isConnected) sourceImage.after(enlarge);
+    const media = sourceImage.closest('.platform-image') || sourceImage;
+    const preview = document.createElement('div');
+    preview.className = 'image-preview';
+    media.before(preview);
+    preview.append(media, enlarge);
 
     enlarge.addEventListener('click', () => {
       imageOpener = enlarge;
